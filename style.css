@@ -1,0 +1,51 @@
+.game {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 15px;
+  background-color: red;
+  border-radius: 5px;
+  width: 350px;
+  height: 350px;
+}
+.grid {
+  display: grid;
+  grid-gap: 1px;
+  grid-template-columns: repeat(3, 1fr);
+}
+.grid button{
+    background-color:yellow;
+    color: blue;
+    font-size: 82px;
+    display: flex;
+}
+.grid button:hover{
+    opacity: 0.7;
+}
+.footer{
+    padding-top: 10px;
+}
+.footer button{
+    border: none;
+    font-size: 20px;
+    font-weight: bold;
+    border: radius 5px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    width: 100px;
+    background-color: gray;
+    color: white;
+}
+.footer button:hover{
+    opacity: 0.9;
+}
+.footer span{
+    flex: 1;
+    text-align: center;
+    color: white;
+    font-family: consolas;
+    font-size: larger;
+    margin: auto 0;
+
+}

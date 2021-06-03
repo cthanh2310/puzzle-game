@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Document</title>
+  </head>
+  <body style="background-color: #4a1c40">
+    <div class="game">
+      <div class="grid">
+        <button onclick="move(1)" id="btn1">1</button>
+        <button onclick="move(2)" id="btn2">2</button>
+        <button onclick="move(3)" id="btn3">3</button>
+        <button onclick="move(4)" id="btn4">4</button>
+        <button onclick="move(5)" id="btn5">5</button>
+        <button onclick="move(6)" id="btn6">6</button>
+        <button onclick="move(7)" id="btn7">7</button>
+        <button onclick="move(8)" id="btn8">8</button>
+        <button id="space"></button>
+      </div>
+
+      <div class="footer">
+        <button>Play</button>
+        <span>Move: 100</span>
+        <span>Time: 100</span>
+      </div>
+    </div>
+
+    <script>
+      function move(id) {
+        var stringID = `#btn${id}`;
+        var buttonElement = document.querySelector(stringID.toString());
+        buttonElement.innerHTML = '';
+        buttonElement.id = stringID;
+        var spaceElement = document.querySelector('#space');
+        spaceElement.innerHTML = `${id}`;
+        spaceElement.id = `space`;
+      }
+    </script>
+  </body>
+</html>
