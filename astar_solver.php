@@ -9,11 +9,11 @@
   
  //   echo json_encode($start);
 
-      $start = [1 => 9, 2 => 8, 3 => 2,
-                4 => 1, 5 => 3, 6 => 5, 
-                7 => 7, 8 => 4, 9 => 6];
+     $start = [1 => 1, 2 => 8, 3 => 3,
+               4 => 4, 5 => 9, 6 => 6, 
+               7 => 2, 8 => 5, 9 => 7];
 
- //   $start = [1 => 2, 2 => 9, 3 => 3, 4 => 1, 5 => 5, 6 => 6, 7 => 4, 8 => 7, 9 => 8];
+  //  $start = [1 => 2, 2 => 9, 3 => 3, 4 => 1, 5 => 5, 6 => 6, 7 => 4, 8 => 7, 9 => 8];
  //  $start = [1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9];
   //   echo json_encode($start);
    //  die();
@@ -35,9 +35,9 @@
         // echo '</pre>';
 
         if ($n['currentState'] === $goal) {
-            echo '<br>END: <pre>';
-            print_r($n);
-            echo '</pre>';
+            // echo '<br>END: <pre>';
+            // print_r($n);
+            // echo '</pre>';
 
             trace($n);
             break;
@@ -55,10 +55,10 @@
 
     function go($n, $direction) {
         $ninePosition = $n['ninePos'];
-        $parentState = $n['currentState'];
-        $newState =   $n['currentState'];
-        
         $parentID = $n['currentID'];
+        $newState =   $n['currentState'];
+        global $O;
+
         switch ($direction) {
             case 'up':  if ($ninePosition > 3) {
                 $tmp = $newState[$ninePosition];
@@ -77,20 +77,25 @@
                 $searchPos = array_search($newState, array_column($O, 'currentState' ), true);
 
                 if ( $searchPos === false ) {
+                    global $O;
+
                     array_push($O, ['currentState' => $newState, 
                                     'ninePos' => $newNinePosition, 
                                     'Mahattan' => $newStateMahattan,
                                     'pathCost' => $newStatePathCost,
                                     'parentID' => $parentID,
                                     'nodeStatus' => 'inQueue'] );
-   //                 echo "Add up ";
+
                 } else { 
                     if ( $newStateMahattan + $newStatePathCost < $O[$searchPos]['Mahattan'] + $O[$searchPos]['pathCost']  ){
+                        global $O;
+
                         $O[$searchPos]['Mahattan'] = $newStateMahattan;
                         $O[$searchPos]['pathCost'] = $newStatePathCost;
+                        $O[$searchPos]['parentID'] = $parentID;
                         $O[$searchPos]['nodeStatus'] = 'inQueue';
+ 
                     }
-
                 }
             }
             break;
@@ -117,14 +122,19 @@
                                     'pathCost' => $newStatePathCost,
                                     'parentID' => $parentID,
                                     'nodeStatus' => 'inQueue'] );
-   //                 echo "Add down ";
+       
                 } else { 
                     if ( $newStateMahattan + $newStatePathCost < $O[$searchPos]['Mahattan'] + $O[$searchPos]['pathCost']  ){
+                        global $O;
+
                         $O[$searchPos]['Mahattan'] = $newStateMahattan;
                         $O[$searchPos]['pathCost'] = $newStatePathCost;
-                        $O[$searchPos]['nodeStatus'] = 'inQueue';
-                    }
+                        $O[$searchPos]['parentID'] = $parentID;
 
+                        $O[$searchPos]['nodeStatus'] = 'inQueue';
+                    
+    
+                    }
                 }
             }
             break;
@@ -152,14 +162,18 @@
                                     'pathCost' => $newStatePathCost,
                                     'parentID' => $parentID,
                                     'nodeStatus' => 'inQueue'] );
-  //                  echo "Add left ";
+          
                 } else { 
                     if ( $newStateMahattan + $newStatePathCost < $O[$searchPos]['Mahattan'] + $O[$searchPos]['pathCost']  ){
+                        global $O;
                         $O[$searchPos]['Mahattan'] = $newStateMahattan;
                         $O[$searchPos]['pathCost'] = $newStatePathCost;
-                        $O[$searchPos]['nodeStatus'] = 'inQueue';
-                    }
+                        $O[$searchPos]['parentID'] = $parentID;
 
+                        $O[$searchPos]['nodeStatus'] = 'inQueue';
+                    
+          
+                    }
                 }
             }
             break;
@@ -187,14 +201,17 @@
                                     'pathCost' => $newStatePathCost,
                                     'parentID' => $parentID,
                                     'nodeStatus' => 'inQueue'] );
- //                   echo "Add right ";
+    
                 } else { 
                     if ( $newStateMahattan + $newStatePathCost < $O[$searchPos]['Mahattan'] + $O[$searchPos]['pathCost']  ){
+                        global $O;
                         $O[$searchPos]['Mahattan'] = $newStateMahattan;
                         $O[$searchPos]['pathCost'] = $newStatePathCost;
-                        $O[$searchPos]['nodeStatus'] = 'inQueue';
-                    }
+                        $O[$searchPos]['parentID'] = $parentID;
 
+                        $O[$searchPos]['nodeStatus'] = 'inQueue';
+   
+                    }
                 }
             }
             break;
