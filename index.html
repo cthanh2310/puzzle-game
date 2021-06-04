@@ -30,11 +30,14 @@
         </div>
 
         <div>
-          <button>I need Solution</button>
+          <button onclick="solution()">I need Solution</button>
+          <button>Back</button>
+          <button>Next</button>
         </div>
-        
+        <p id="message"></p>
       </div>
     </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <script>
 
@@ -50,6 +53,29 @@
         spaceElement.innerHTML = `${id}`;
         spaceElement.id = `space`;
       }
+
+      function solution () {
+        var startState = JSON.stringify([0,3,4,2,1,7,6,5,9,8]);
+        var answer = [];
+        console.log(startState);
+        $.ajax({
+          type: 'get',
+          url: 'astar_solver.php',
+          data: {'startState': startState},
+          success: function (response) {
+            $('#message').text(response);
+            answer = JSON.parse ( response );
+            answer = answer.map(function (currentObj) {
+              var mapArray = Object.values(currentObj);
+              mapArray.unshift(0);
+              return mapArray;
+            });
+            console.log( answer);
+          }
+        })
+      }
     </script>
+    
+    
   </body>
 </html>
