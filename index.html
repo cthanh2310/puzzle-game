@@ -1,54 +1,323 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
-    <title>Document</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <title>15 Puzzle</title>
   </head>
-  <body style="background-color: #4a1c40">
-    <div class="game">
-      <div class="grid">
-        <button onclick="move(1)" id="btn1">1</button>
-        <button onclick="move(2)" id="btn2">2</button>
-        <button onclick="move(3)" id="btn3">3</button>
-        <button onclick="move(4)" id="btn4">4</button>
-        <button onclick="move(5)" id="btn5">5</button>
-        <button onclick="move(6)" id="btn6">6</button>
-        <button onclick="move(7)" id="btn7">7</button>
-        <button onclick="move(8)" id="btn8">8</button>
-        <button id="space"></button>
-      </div>
-
-      <div class="footer">
-        <button>New Game</button>
-        <button>Replay</button>
-        <div>
-          <span>Move: 100</span>
-          <span>Time: 100</span>
+  <body style="background-image: linear-gradient(rgb(224, 147, 147), rgb(45, 164, 168), rgb(214, 149, 63), rgb(64, 182, 117));">
+    <div id="wrapper">
+      <div id="container">
+        <h1>Puzzle 15</h1>
+        <div id="board-time">00:00</div>
+        <div id="container-play">
+          <a id="play" href="javascript:void(0)"
+            >Click to play</a
+          >
         </div>
-
-        <div>
-          <button>I need Solution</button>
+        <div id="alert_puzzle"></div>
+        <div id="puzzle">
+          <div number="1" class="cell-puzzle row-1 col-1">1</div>
+          <div number="2" class="cell-puzzle row-1 col-2">2</div>
+          <div number="3" class="cell-puzzle row-1 col-3">3</div>
+          <div number="4" class="cell-puzzle row-2 col-1">4</div>
+          <div number="5" class="cell-puzzle row-2 col-2">5</div>
+          <div number="6" class="cell-puzzle row-2 col-3">6</div>
+          <div number="7" class="cell-puzzle row-3 col-1">7</div>
+          <div number="8" class="cell-puzzle row-3 col-2">8</div>
+          <div
+            number="0"
+            class="cell-puzzle row-4 col-4 cell-puzzle-zero"
+          ></div>
         </div>
-        
       </div>
     </div>
-
-    <script>
-
-      function newGame () {
-
+    <style>
+      * {
+        padding: 0px;
+        margin: 0px;
       }
-      function move(id) {
-        var stringID = `#btn${id}`;
-        var buttonElement = document.querySelector(stringID.toString());
-        buttonElement.innerHTML = '';
-        buttonElement.id = stringID;
-        var spaceElement = document.querySelector('#space');
-        spaceElement.innerHTML = `${id}`;
-        spaceElement.id = `space`;
+      html {
+        width: 100%;
+        height: 100%;
+      }
+      body {
+        height: 100%;
+        width: 100%;
+      }
+      html > body {
+        height: 100%;
+      }
+      #wrapper {
+        width: 100%;
+        margin: 0 auto;
+      }
+      #wrapper a {
+        text-align: center;
+      }
+      #container {
+        font-size: 16px;
+        width: 300px;
+        margin: 50px auto 0;
+        text-align: center;
+      }
+      #container h1 {
+        color: #276d8c;
+      }
+      #puzzle {
+        height: 185px;
+        width: 185px;
+        position: relative;
+        border: 2px solid #757575;
+        margin: 0 auto 25px;
+      }
+      #puzzle .cell-puzzle {
+        width: 58px;
+        height: 58px;
+        border: 2px solid white;
+        position: absolute;
+        text-align: center;
+        vertical-align: middle;
+        line-height: 20px;
+        font-size: 36px;
+        line-height: 60px;
+        background-color: #3b9aff;
+        z-index: 100;
+        cursor: pointer;
+        user-select: none;
+      }
+      #puzzle .cell-puzzle-zero {
+        background-color: white !important;
+        z-index: 50;
+      }
+      #puzzle > .row-1 {
+        top: 0;
+      }
+      #puzzle > .row-2 {
+        top: 60px;
+      }
+      #puzzle > .row-3 {
+        top: 120px;
+      }
+      #puzzle > .col-1 {
+        left: 0;
+      }
+      #puzzle > .col-2 {
+        left: 60px;
+      }
+      #puzzle > .col-3 {
+        left: 120px;
+      }
+
+      #container-play {
+        margin: 10px 0;
+        text-align: center;
+        height: 50px;
+      }
+      #play {
+        width: 150px;
+        height: 50px;
+        border: 2px solid #3f4f2e;
+        text-align: center;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 20px;
+        background-color: #689b37;
+        display: inline-block;
+        color: white;
+        text-align: center;
+        line-height: 48px;
+        border-radius: 3px;
+      }
+      #alert_puzzle {
+        font-size: 16px;
+        color: coral;
+      }
+    </style>
+    <script
+      type="text/javascript"
+      src="https://code.jquery.com/jquery-3.4.1.min.js"
+    ></script>
+    <script>
+      // ma trận toàn cục điều khiển mọi hoạt động của game
+      var matrix = [
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9],
+      ];
+
+      // các biến toàn cục dùng để tính giờ
+      var secs = 0;
+      var currentSeconds = 0;
+      var currentMinutes = 0;
+      var timer;
+
+      // gọi sự kiện bắt đầu game khi ấn nút play
+      $("#play").bind("click", function () {
+        initialize();
+        beginTime();
+        $("#alert_puzzle").text("");
+      });
+
+      // Khi click vào 1 sô thì gọi đến hàm move để di chuyển
+      $("#puzzle .cell-puzzle").bind("click", function () {
+        if (secs > 0) {
+          var obj = $(this);
+          move(obj);
+        }
+      });
+
+      // hàm init game, gọi 1 dãy số từ 1 đến 15 bất kì, sắp xếp các element theo dãy số đó để bắt đầu game
+      function initialize() {
+        var arrRandomNumber = shuffleMatrix();
+
+        var count = 0;
+        for (var i = 0; i < 3; i++) {
+          for (var j = 0; j < 3; j++) {
+            var number = arrRandomNumber[count];
+            matrix[i][j] = number;
+
+            if (i == 2 && j == 2) {
+              matrix[i][j] = 0;
+            }
+
+            $("#puzzle .cell-puzzle[number=" + number + "]").css(
+              "top",
+              i * 60 + "px"
+            );
+            $("#puzzle .cell-puzzle[number=" + number + "]").css(
+              "left",
+              j * 60 + "px"
+            );
+            count++;
+          }
+        }
+      }
+
+      // hàm tạo dãy số bất kì từ 1 đến 15
+      function shuffleMatrix() {
+        var arr = [];
+        while (arr.length < 8) {
+          var r = Math.floor(Math.random() * 8) + 1;
+          if (arr.indexOf(r) === -1) arr.push(r);
+        }
+
+        return arr;
+      }
+
+      // hàm bắt đầu đếm giờ
+      function beginTime() {
+        secs = 0;
+        currentSeconds = 0;
+        currentMinutes = 0;
+        clearTimeout(timer);
+        intervalTime();
+      }
+
+      // hàm đếm giờ
+      function intervalTime() {
+        currentMinutes = Math.floor(secs / 60);
+        currentSeconds = secs % 60;
+
+        if (currentMinutes <= 9) {
+          currentMinutes = "0" + currentMinutes;
+        }
+
+        if (currentSeconds <= 9) {
+          currentSeconds = "0" + currentSeconds;
+        }
+
+        secs++;
+        $("#board-time").text(currentMinutes + ":" + currentSeconds);
+        timer = setTimeout("intervalTime()", 1000);
+        console.log(secs);
+      }
+
+      // hàm di chuyển các ô.
+      function move(obj) {
+        var numberCell = parseFloat(obj.attr("number"));
+        var win = false;
+
+        for (var i = 0; i < 3; i++) {
+          for (var j = 0; j < 3; j++) {
+            if (matrix[i][j] == numberCell) {
+              if (j > 0 && matrix[i][j - 1] == 0) {
+                $("#puzzle .cell-puzzle[number=0]").css("left", j * 60 + "px");
+                obj.animate(
+                  {
+                    left: (j - 1) * 60 + "px",
+                  },
+                  100
+                );
+
+                matrix[i][j - 1] = numberCell;
+                matrix[i][j] = 0;
+              } else if (j < 2 && matrix[i][j + 1] == 0) {
+                $("#puzzle .cell-puzzle[number=0]").css("left", j * 60 + "px");
+                obj.animate(
+                  {
+                    left: (j + 1) * 60 + "px",
+                  },
+                  100
+                );
+
+                matrix[i][j + 1] = numberCell;
+                matrix[i][j] = 0;
+              } else if (i > 0 && matrix[i - 1][j] == 0) {
+                $("#puzzle .cell-puzzle[number=0]").css("top", i * 60 + "px");
+                obj.animate(
+                  {
+                    top: (i - 1) * 60 + "px",
+                  },
+                  100
+                );
+
+                matrix[i - 1][j] = numberCell;
+                matrix[i][j] = 0;
+              } else if (i < 2 && matrix[i + 1][j] == 0) {
+                $("#puzzle .cell-puzzle[number=0]").css("top", i * 60 + "px");
+                obj.animate(
+                  {
+                    top: (i + 1) * 60 + "px",
+                  },
+                  100
+                );
+
+                matrix[i + 1][j] = numberCell;
+                matrix[i][j] = 0;
+              }
+
+              win = checkWin();
+              if (win) {
+                break;
+              }
+
+              return;
+            }
+          }
+        }
+      }
+
+      // hàm kiểm tra và báo chiến thắng
+      function checkWin() {
+        var winner = false;
+        var winString = "1,2,3,4,5,6,7,8,0";
+        var loseString = "1,2,3,4,5,6,8,7,0";
+
+        var matrixStr = matrix.toString();
+
+        if (winString == matrixStr) {
+          clearTimeout(timer);
+          $("#alert_puzzle").text(
+            "Bạn đã chiến thắng. Kỷ lục của bạn là " + $("#board-time").text()
+          );
+        } else if (loseString == matrixStr) {
+          $("#alert_puzzle").text(
+            'Bạn không có hy vọng để chiến thắng. Ấn nút "click to play" để chơi game mới'
+          );
+        }
       }
     </script>
   </body>
