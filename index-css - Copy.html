@@ -1,0 +1,539 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <style>
+      .game {
+        position: absolute;
+        top: 30%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 15px;
+        background-color: linear-gradient(
+          rgb(155, 181, 196),
+          rgb(211, 231, 214),
+          rgb(213, 224, 164)
+        );
+        border-radius: 5px;
+        width: 350px;
+        height: 350px;
+      }
+      .grid {
+        display: grid;
+        grid-gap: 1px;
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .grid button {
+        background-image: linear-gradient(
+          rgb(155, 181, 196),
+          rgb(211, 231, 214),
+          rgb(213, 224, 164)
+        );
+        color: rgb(59, 128, 82);
+        font-size: 40px;
+        display: flex;
+        width: auto;
+        height: 105px;
+        margin: 1px;
+        padding: 0;
+      }
+      .grid #blankButton {
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background-image: linear-gradient(
+          rgb(107, 107, 105),
+          rgb(91, 92, 95),
+          rgb(167, 167, 167)
+        );
+      }
+      #blankButton:parent {
+        margin: 0;
+        padding: 0;
+      }
+      .grid button:hover {
+        opacity: 0.4;
+      }
+      .footer {
+        padding-top: 10px;
+      }
+      .footer button {
+        border: none;
+        font-size: 20px;
+        font-weight: bold;
+        border-radius: 5px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+        padding: 10px;
+        width: 130px;
+        background-color: gray;
+        color: white;
+      }
+      .footer button:hover {
+        opacity: 0.9;
+      }
+      .footer span {
+        flex: 1;
+        text-align: center;
+        color: white;
+        font-family: consolas;
+        font-size: larger;
+        margin: auto 0;
+      }
+      .footer {
+        margin-top: 20px;
+      }
+      .solution {
+        display: flex;
+        position: fixed;
+      }
+      
+ul
+{
+    margin: 0;
+    padding: 0;
+}
+
+li
+{
+    list-style:none;
+}
+
+a
+{
+    text-decoration:none;
+}
+
+#content
+{
+    float:right;
+    width:80%;
+    background-color:red;
+}
+
+#menu
+{
+    width:131px;
+    height: 49px;
+    border-radius: 5px;
+    color: white;
+    font-size: large;
+    text-align: justify;
+    float:left;
+    background-color: gray;
+}
+
+.cl-menu li
+{
+    position: relative;
+}
+
+.cl-menu > li:hover
+{
+    font-weight:bold;
+    opacity: 1;
+    filter: alpha(opacity=0);
+}
+
+.cl-menu li a
+{
+    display: block;
+    min-width: 150px;
+    color:white;
+}
+
+.cl-menu li:hover a
+{
+    color:#FFF;
+
+}
+
+.cl-menu li ul
+{
+    position: absolute;
+    top: 0;
+    left: 100%;
+    border: 1px solid grey;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    display:none;
+}
+
+.cl-menu li:hover > ul
+{
+    display:block;
+    filter: alpha(opacity=100);
+}
+
+.cl-menu li ul li
+{
+    background: grey;
+    border-bottom:1px solid grey;
+    border-top:none;
+    border-left:none;
+    border-right:none;
+}
+
+.cl-menu li ul li:last-child
+{
+    border-bottom: none;
+}
+    </style>
+
+    <title>Document</title>
+  </head>
+  <body
+    style="
+      width: 1500px;
+      height: 700px;
+      background-image: linear-gradient(
+        rgb(224, 147, 147),
+        rgb(45, 164, 168),
+        rgb(214, 149, 63),
+        rgb(64, 182, 117)
+      );
+    "
+  >
+    <div class="game">
+      <div class="grid">
+        <button onclick="move(1)" id="btn1">1</button>
+        <button onclick="move(2)" id="btn2">2</button>
+        <button onclick="move(3)" id="btn3">3</button>
+        <button onclick="move(4)" id="btn4">4</button>
+        <button onclick="move(5)" id="btn5">5</button>
+        <button onclick="move(6)" id="btn6">6</button>
+        <button onclick="move(7)" id="btn7">7</button>
+        <button onclick="move(8)" id="btn8">8</button>
+        <button onclick="move(9)" id="btn9"><span id="blankButton"></span></button>
+      </div>
+
+      <div class="footer">
+        <div class="row" style="margin: 0px;">
+          <button style="margin-right: auto;" onclick="newGame()">New Game</button>
+        <button style="margin-left: auto;" onclick="replay()">Replay</button>
+        </div>
+        <div>
+          <span  for="moveCount">Move: </span><span id="moveCount">0</span>
+          <span>Time: 100</span>
+        </div>
+
+          <button id='menu'>
+            <ul class="cl-menu">
+                
+                <li id='albumes'>
+                    <a style="text-decoration:  none; padding-bottom: 50px;" href="#"><b>Solution</b></a>
+                    <ul>
+                        <li>
+                          <a style="text-decoration: none;" href="#">For current state</a>
+                        </li>
+                        <li>
+                          <a style="text-decoration:  none;"href="#">For start state</a>
+                        </li>
+                    </ul>   
+                </li>
+                 
+            </ul>
+          </button>
+          <div class="row" style="margin: 0px; margin-top: 70px; ">
+            <button id="back" style="margin-right: auto;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-circle-fill" viewBox="0 0 16 16">
+                <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
+              </svg>
+              Back
+            </button>
+            <button id="next" style="margin-left: auto;">Next
+              <i class="bi bi-arrow-right-circle-fill">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">
+                  <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/>
+                </svg>
+              </i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Button trigger modal -->
+    <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+  Launch demo modal
+</button> -->
+
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="exampleModalCenter"
+      data-backdrop="static"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalCenterTitle"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalCenterTitle">
+              Đang khởi tạo game
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              style="display: none"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <img src="loading.gif" alt="" height="100px" />
+            <br />
+            Quá trình có thể mất tới 30s. Cảm ơn bạn đã chờ đợi.
+          </div>
+          <div class="modal-footer" style="display: none">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 
+Button trigger modal
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#winnerModel">
+  Launch demo modal
+</button> -->
+
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="winnerModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="winnerModalTitle"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="winnerModalTitle">
+              Tuyệt vời: Bạn đã chiến thắng
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <img src="winner.gif" alt="" width="100%" />
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">
+              Đóng
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      var nextStartState = [];
+      var nextAnswer = [];
+      var nextAnswerPathLength = 0;
+
+      var startState = [];
+      var currentState = [];
+      var answer = false;
+      var answerPathLength = 0;
+      var moveCount = 0;
+      var newgameClick = false;
+      var finishInit = false;
+
+      $("document").ready(function () {
+        createNewGame();
+      });
+
+      function newGame() {
+        newgameClick = true;
+
+        if (!finishInit) {
+          //JSON.stringify(startState) != JSON.stringify(nextStartState)
+          $("#exampleModalCenter").modal("show");
+        } else {
+          if (finishInit) {
+            startState = Array.from(nextStartState);
+            updateState(startState);
+            currentState = Array.from(startState);
+            answer = Array.from(nextAnswer);
+            answerPathLength = nextAnswerPathLength;
+            newgameClick = false;
+            createNewGame();
+          }
+        }
+
+        moveCount = 0;
+        $("#moveCount").text(moveCount);
+      }
+
+      function replay() {
+        moveCount = 0;
+        $("#moveCount").text(moveCount);
+        currentState = Array.from(startState);
+        updateState(startState);
+      }
+
+      function shuffleMatrix() {
+        var arr = [0];
+        while (arr.length <= 9) {
+          var r = Math.floor(Math.random() * 9) + 1;
+          if (arr.indexOf(r) === -1) arr.push(r);
+        }
+        //  arr.push(9);
+        return arr;
+      }
+
+      function updateState(state) {
+        state.forEach(function (eachElement, index) {
+          if (eachElement == 9) {
+            $(`#btn${index}`).html('<span id="blankButton"></span>');
+          } else $(`#btn${index}`).text(eachElement);
+        });
+      }
+
+      function move(id) {
+        var stringID = `#btn${id}`;
+        var ninePosition;
+        var swap = false;
+
+        if (currentState[id] != 9) {
+          if (currentState[id - 3] == 9) {
+            ninePosition = id - 3;
+            swap = true;
+          } else if (currentState[id + 3] == 9) {
+            ninePosition = id + 3;
+            swap = true;
+          } else if (currentState[id - 1] == 9) {
+            if (id % 3 != 1) {
+              ninePosition = id - 1;
+              swap = true;
+            }
+          } else if (currentState[id + 1] == 9) {
+            if (id % 3 != 0) {
+              ninePosition = id + 1;
+              swap = true;
+            }
+          }
+          console.log(ninePosition);
+          if (swap) {
+            $("#moveCount").text(++moveCount);
+            var tmp = currentState[id];
+            currentState[id] = currentState[ninePosition];
+            currentState[ninePosition] = tmp;
+            updateState(currentState);
+            checkWin();
+          }
+        }
+      }
+
+      function checkWin() {
+        if (
+          JSON.stringify(currentState) ==
+          JSON.stringify([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+        ) {
+          $("#winnerModal").modal("show");
+          currentState = [];
+        }
+      }
+
+      function createNewGame() {
+        var firstState = shuffleMatrix();
+        finishInit = false;
+        $.ajax({
+          type: "get",
+          url: "astar_solver.php",
+          data: { startState: JSON.stringify(Array.from(firstState)) },
+
+          success: function (response) {
+            $("#message").text(response);
+            try {
+              nextAnswer = JSON.parse(response);
+            } catch {
+              nextAnswer = false;
+            }
+            if (nextAnswer) {
+              nextAnswer = nextAnswer.map(function (currentObj) {
+                var mapArray = Object.values(currentObj);
+                mapArray.unshift(0);
+                return mapArray;
+              });
+
+              nextAnswer = nextAnswer.reverse();
+              nextAnswerPathLength = nextAnswer.length;
+              nextStartState = Array.from(firstState);
+              console.log(nextAnswer);
+              finishInit = true;
+
+              if (newgameClick) {
+                startState = Array.from(nextStartState);
+                updateState(startState);
+                currentState = Array.from(startState);
+                answer = Array.from(nextAnswer);
+                answerPathLength = nextAnswerPathLength;
+                newgameClick = false;
+                createNewGame();
+              }
+
+              setTimeout(() => {
+                $("#exampleModalCenter").modal("hide");
+              }, 500);
+              finishInit = true;
+            } else {
+              createNewGame();
+            }
+          },
+        });
+      }
+      var i = 0;
+  $('#back').click (function () {
+    if (i > answerPathLength - 1) {
+      i = answerPathLength - 1;
+    } 
+    if (i < 1) {
+      i = 1;
+    }
+
+    updateState(answer[--i]);
+  })
+  $('#next').click (function () {
+    if (i > answerPathLength) {
+      i = answerPathLength ;
+    } 
+    if (i < -1) {
+      i = -1;
+    }
+    updateState(answer[i++]);
+  })
+    </script>
+  </body>
+</html>
