@@ -1,9 +1,13 @@
 <?php
-    set_time_limit(6);
+    use Ds\Set;
     $p = [[0,0], ['x' => 1, 'y' => 1], ['x' => 1, 'y' => 2], ['x' => 1, 'y' => 3], ['x' => 2, 'y' => 1], 
                 ['x' => 2, 'y' => 2], ['x' => 2, 'y' => 3], ['x' => 3, 'y' => 1], ['x' => 3, 'y' => 2], ['x' => 3, 'y' => 3] ];
 
     $O = [];
+    $hasBeenVisted = new Set();
+    $Queue = new Set();
+
+
     $tmp = $_GET['startState'];
     $tmp = json_decode($tmp, true);
     
@@ -11,11 +15,10 @@
         $start[intval($key)] = intval($element);
     }
     unset($start[0]);
-//    echo json_encode($start);
-
-//    $start = [1 => 9, 2 => 6, 3 => 8,
-//    4 => 5, 5 => 1, 6 => 7, 
-//    7 => 3, 8 => 4, 9 => 2];
+    
+        $start = [1 => 7, 2 => 6, 3 => 3,
+                 4 => 1, 5 => 8, 6 => 4, 
+                 7 => 2, 8 => 5, 9 => 9];
 
   //  $start = [1 => 2, 2 => 9, 3 => 3, 4 => 1, 5 => 5, 6 => 6, 7 => 4, 8 => 7, 9 => 8];
  //  $start = [1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9];
@@ -23,6 +26,7 @@
    //  die();
     $goal = [1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9];
  
+    
 
     $ninePosition = array_search(9, $start, true); 
 
@@ -32,10 +36,14 @@
                     'Mahattan' => calculateMahattan($start),
                     'parentID' => null,
                     'nodeStatus' => 'inQueue'] );
-    $queueCount = 1;
-    while ( $queueCount > 0) {
-        $n = nodeHasMinMahattanDistance();
-        $queueCount--;
+
+    $ArrayHasBeenVisted->add($start);
+    $Queue->add(0);
+
+    while ( ! $Queue->isEmpty()) {
+        $number = nodeHasMinMahattanDistance();
+        $Queue -> remove($number);
+
         // echo '<pre>';
         // print_r($n);
         // echo '</pre>';
@@ -56,7 +64,7 @@
 
         //  echo "<pre>";
         //  print_r($O);
-        //  echo "</pre>";    s    
+        //  echo "</pre>";        
     }
 
     function go($n, $direction) {
@@ -91,8 +99,6 @@
                                     'pathCost' => $newStatePathCost,
                                     'parentID' => $parentID,
                                     'nodeStatus' => 'inQueue'] );
-                    global $queueCount;
-                    $queueCount++;
 
                 } else { 
                     if ( $newStateMahattan + $newStatePathCost < $O[$searchPos]['Mahattan'] + $O[$searchPos]['pathCost']  ){
@@ -102,9 +108,6 @@
                         $O[$searchPos]['pathCost'] = $newStatePathCost;
                         $O[$searchPos]['parentID'] = $parentID;
                         $O[$searchPos]['nodeStatus'] = 'inQueue';
-
-                        global $queueCount;
-                        $queueCount++;
  
                     }
                 }
@@ -133,8 +136,7 @@
                                     'pathCost' => $newStatePathCost,
                                     'parentID' => $parentID,
                                     'nodeStatus' => 'inQueue'] );
-                                    global $queueCount;
-                                    $queueCount++;
+       
                 } else { 
                     if ( $newStateMahattan + $newStatePathCost < $O[$searchPos]['Mahattan'] + $O[$searchPos]['pathCost']  ){
                         global $O;
@@ -142,10 +144,10 @@
                         $O[$searchPos]['Mahattan'] = $newStateMahattan;
                         $O[$searchPos]['pathCost'] = $newStatePathCost;
                         $O[$searchPos]['parentID'] = $parentID;
-                        $O[$searchPos]['nodeStatus'] = 'inQueue';
 
-                        global $queueCount;
-                        $queueCount++;
+                        $O[$searchPos]['nodeStatus'] = 'inQueue';
+                    
+    
                     }
                 }
             }
@@ -174,8 +176,6 @@
                                     'pathCost' => $newStatePathCost,
                                     'parentID' => $parentID,
                                     'nodeStatus' => 'inQueue'] );
-                                    global $queueCount;
-                    $queueCount++;
           
                 } else { 
                     if ( $newStateMahattan + $newStatePathCost < $O[$searchPos]['Mahattan'] + $O[$searchPos]['pathCost']  ){
@@ -185,8 +185,6 @@
                         $O[$searchPos]['parentID'] = $parentID;
 
                         $O[$searchPos]['nodeStatus'] = 'inQueue';
-                        global $queueCount;
-                    $queueCount++;
                     
           
                     }
@@ -217,8 +215,6 @@
                                     'pathCost' => $newStatePathCost,
                                     'parentID' => $parentID,
                                     'nodeStatus' => 'inQueue'] );
-                                    global $queueCount;
-                    $queueCount++;
     
                 } else { 
                     if ( $newStateMahattan + $newStatePathCost < $O[$searchPos]['Mahattan'] + $O[$searchPos]['pathCost']  ){
@@ -228,8 +224,6 @@
                         $O[$searchPos]['parentID'] = $parentID;
 
                         $O[$searchPos]['nodeStatus'] = 'inQueue';
-                        global $queueCount;
-                    $queueCount++;
    
                     }
                 }
@@ -266,7 +260,7 @@
         $O[$minKey]['nodeStatus'] = 'offQueue' ;
         $O[$minKey]['currentID'] = $minKey;
         //echo "\n Chọn :" . $minKey ;
-        return $O [$minKey];
+        return $minKey;
     }
 
     function trace ($n) {

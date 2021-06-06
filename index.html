@@ -4,7 +4,9 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link rel="stylesheet" href="style.css" />
+
   <title>Document</title>
 </head>
 <body style="background-color: #4a1c40">
@@ -24,30 +26,121 @@
 
     <div class="footer">
       <button onclick="newGame()">New Game</button>
-      <button>Replay</button>
+      <button onclick="replay()">Replay</button>
       <div>
-        <span>Move: 100</span>
+        <span for="moveCount">Move: </span><span id="moveCount">0</span>
         <span>Time: 100</span>
       </div>
 
       <div>
         <button id="solution">I need Solution</button>
-        <button>Back</button>
-        <button>Next</button>
+        <button id="back">Back</button>
+        <button id="next">Next</button>
       </div>
       
     </div>
   </div>
-<script
-  src="https://code.jquery.com/jquery-3.4.1.min.js"
-></script>
+  <!-- Button trigger modal -->
+<!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+  Launch demo modal
+</button> -->
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">Đang khởi tạo game</h5>
+        <button type="button" class="close" data-dismiss="modal" style="display: none" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <img src="loading.gif" alt="" height="100px">
+        <br>
+        Quá trình có thể mất tới 30s. Cảm ơn bạn đã chờ đợi.
+      </div>
+      <div class="modal-footer" style="display: none" >
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 
+Button trigger modal
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#winnerModel">
+  Launch demo modal
+</button> -->
+
+<!-- Modal -->
+<div class="modal fade" id="winnerModal" tabindex="-1" role="dialog" aria-labelledby="winnerModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="winnerModalTitle">Tuyệt vời: Bạn đã chiến thắng</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <img src="winner.gif" alt="" width="100%">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
 <script>
   
+  var nextStartState = [];
+  var nextAnswer = [];
+  var nextAnswerPathLength = 0;
+
   var startState = [];
+  var currentState = [];
+  var answer = false;
+  var answerPathLength = 0;
+  var moveCount = 0;
+  var newgameClick = false;
+  var finishInit = false;
+
+  $('document').ready(function () {
+    createNewGame();
+  })
+
   function newGame () {
-      startState = shuffleMatrix();
-      console.log(startState);
-      updateState(startState);
+    newgameClick = true;
+
+      if ( ! finishInit) { //JSON.stringify(startState) != JSON.stringify(nextStartState)
+        $('#exampleModalCenter').modal('show')
+      } else {
+        if (finishInit) {
+            startState = Array.from(nextStartState);
+            updateState(startState);
+            currentState = Array.from(startState);
+            answer = Array.from(nextAnswer);
+            answerPathLength = nextAnswerPathLength;
+            newgameClick = false;
+            createNewGame();
+        }
+    }
+    
+     moveCount = 0;
+     $('#moveCount').text(moveCount);
+  }
+
+  function replay() {
+    moveCount = 0;
+     $('#moveCount').text(moveCount);
+    currentState = Array.from(startState);
+    updateState(startState);
   }
 
   function shuffleMatrix() {
@@ -71,34 +164,115 @@
 
   function move(id) {
     var stringID = `#btn${id}`;
-    var buttonElement = document.querySelector(stringID.toString());
-    buttonElement.innerHTML = '';
-    buttonElement.id = stringID;
-    var spaceElement = document.querySelector('#space');
-    spaceElement.innerHTML = `${id}`;
-    spaceElement.id = `space`;
+    var ninePosition;
+    var swap =false;
+    
+    if (currentState[id] != 9) {
+      if (currentState[id-3] == 9 ) {
+        ninePosition = id-3;
+        swap = true;
+      } else if (currentState[id+3] == 9) {
+        ninePosition = id+3;
+        swap = true;
+      } else if (currentState[id-1] == 9) {
+        if ( id%3 != 1) {
+          ninePosition = id-1;
+          swap = true;
+        } 
+      } else if (currentState[id+1] == 9) {
+        if ( id%3 != 0 ) {
+          ninePosition = id+1;
+          swap = true;
+        }
+      }
+      console.log(ninePosition);
+      if (swap) {
+        $('#moveCount').text(++moveCount);
+        var tmp = currentState[id];
+        currentState[id] = currentState[ninePosition];
+        currentState[ninePosition] = tmp;
+        updateState(currentState)
+        checkWin();
+      }
+     
+    }
+    
   }
 
-  $('#solution').click( function () {
-    console.log (startState);
-    var state = JSON.stringify(startState);
-    var answer = [];
-    console.log(state);
+  function checkWin() {
+    if (JSON.stringify(currentState) == JSON.stringify([0,1,2,3,4,5,6,7,8,9])) {
+      $('#winnerModal').modal('show')
+      currentState = [];
+
+    }
+  }
+
+  function createNewGame () {
+    var firstState= shuffleMatrix();
+    finishInit = false;
     $.ajax({
       type: 'get',
       url: 'astar_solver.php',
-      data: {'startState': state},
+      data: {'startState': JSON.stringify(Array.from(firstState))},
+
       success: function (response) {
         $('#message').text(response);
-        answer = JSON.parse ( response );
-        answer = answer.map(function (currentObj) {
-          var mapArray = Object.values(currentObj);
-          mapArray.unshift(0);
-          return mapArray;
-        });
-        console.log( answer);
-      }
+        try {
+          nextAnswer = JSON.parse ( response );
+        } catch {
+          nextAnswer = false;
+        }
+        if (nextAnswer) {
+          nextAnswer = nextAnswer.map(function (currentObj) {
+            var mapArray = Object.values(currentObj);
+            mapArray.unshift(0);
+            return mapArray;
+          });
+
+          nextAnswer = nextAnswer.reverse();
+          nextAnswerPathLength = nextAnswer.length;
+          nextStartState = Array.from(firstState);
+          console.log (nextAnswer)
+          finishInit = true;
+
+          if (newgameClick) {
+            startState = Array.from(nextStartState);
+            updateState(startState);
+            currentState = Array.from(startState);
+            answer = Array.from(nextAnswer);
+            answerPathLength = nextAnswerPathLength;
+            newgameClick = false;
+            createNewGame();
+          }
+
+          setTimeout ( () => {
+            $('#exampleModalCenter').modal('hide')
+          },500)
+          finishInit = true;
+        } else {
+          createNewGame();
+        }
+      },
     })
+  }
+  var i = 100;
+  $('#next').click (function () {
+    if (i > answerPathLength - 1) {
+      i = answerPathLength - 1;
+    } 
+    if (i < -1) {
+      i = -1;
+    }
+    updateState(answer[--i]);
+  })
+  $('#back').click (function () {
+    if (i > answerPathLength - 2) {
+      i = answerPathLength - 2;
+    } 
+    if (i < 0) {
+      i = 0;
+    }
+    updateState(answer[++i]);
   })
 </script>
 </body>
