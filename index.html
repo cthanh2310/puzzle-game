@@ -230,8 +230,9 @@ Button trigger modal
           });
 
           nextAnswer = nextAnswer.reverse();
+          nextAnswer.unshift (firstState);
           nextAnswerPathLength = nextAnswer.length;
-          nextStartState = Array.from(firstState);
+          nextStartState = Array.from(nextAnswer[0]);
           console.log (nextAnswer)
           finishInit = true;
 
@@ -255,24 +256,25 @@ Button trigger modal
       },
     })
   }
-  var i = 100;
-  $('#next').click (function () {
+  var i = 0;
+  $('#back').click (function () {
     if (i > answerPathLength - 1) {
       i = answerPathLength - 1;
+    } 
+    if (i < 1) {
+      i = 1;
+    }
+
+    updateState(answer[--i]);
+  })
+  $('#next').click (function () {
+    if (i > answerPathLength - 2) {
+      i = answerPathLength - 2;
     } 
     if (i < -1) {
       i = -1;
     }
-    updateState(answer[--i]);
-  })
-  $('#back').click (function () {
-    if (i > answerPathLength - 2) {
-      i = answerPathLength - 2;
-    } 
-    if (i < 0) {
-      i = 0;
-    }
-    updateState(answer[++i]);
+    updateState(answer[i++]);
   })
 </script>
 </body>
